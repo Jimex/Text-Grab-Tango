@@ -13,6 +13,7 @@ using Text_Grab.Services;
 using Text_Grab.Utilities;
 using Windows.Globalization;
 using Windows.Media.Ocr;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Text_Grab.Views;
 
@@ -581,6 +582,7 @@ public partial class FullscreenGrab : Window
                 isSingleLine,
                 isTable,
                 destinationTextBox);
+            OutputUtilities.SendTextToDictTango(grabbedText, e.GetPosition(this).X, e.GetPosition(this).Y);
             WindowUtilities.CloseAllFullscreenGrabs();
         }
         else

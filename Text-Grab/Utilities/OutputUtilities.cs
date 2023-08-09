@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Net.Http;
+using System.Windows;
 using System.Windows.Controls;
 using Text_Grab.Properties;
 
@@ -30,4 +32,13 @@ public class OutputUtilities
 
         WindowUtilities.ShouldShutDown();
     }
+
+    //alex20230808.sn
+    public async static void SendTextToDictTango(string text, double x, double y)
+    {
+        var httpClient = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, $"http://wordlookup.localhost:16332/?word={Uri.EscapeDataString(text)}&x={x}&y={y}");
+        await httpClient.SendAsync(request);
+    }
+    //alex20230808.en
 }
