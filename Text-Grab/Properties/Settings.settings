@@ -6,7 +6,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ShowToast" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DefaultLaunch" Type="System.String" Scope="User">
       <Value Profile="(Default)">Fullscreen</Value>
@@ -36,7 +36,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="NeverAutoUseClipboard" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="EditTextWindowSizeAndPosition" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
