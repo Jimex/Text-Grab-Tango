@@ -9,7 +9,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DefaultLaunch" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Fullscreen</Value>
+      <Value Profile="(Default)">FullScreen</Value>
     </Setting>
     <Setting Name="CorrectErrors" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -45,7 +45,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RunInTheBackground" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="TryInsert" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

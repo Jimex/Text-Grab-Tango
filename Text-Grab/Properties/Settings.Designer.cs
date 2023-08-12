@@ -49,7 +49,7 @@ namespace Text_Grab.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Fullscreen")]
+        [global::System.Configuration.DefaultSettingValueAttribute("FullScreen")]
         public string DefaultLaunch {
             get {
                 return ((string)(this["DefaultLaunch"]));
@@ -193,7 +193,7 @@ namespace Text_Grab.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool RunInTheBackground {
             get {
                 return ((bool)(this["RunInTheBackground"]));
