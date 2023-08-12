@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,13 +33,28 @@ public class OutputUtilities
 
         WindowUtilities.ShouldShutDown();
     }
-
+    static HttpClient? httpClient = null;
     //alex20230808.sn
     public async static void SendTextToDictTango(string text, double x, double y)
     {
-        var httpClient = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Get, $"http://wordlookup.localhost:16332/?word={Uri.EscapeDataString(text)}&x={x}&y={y}");
-        await httpClient.SendAsync(request);
+        if (httpClient == null)
+        {
+            httpClient = new HttpClient();
+        }
+        var url = $"http://localhost:16332/wordlookup.dt?word={Uri.EscapeDataString(text)}&x={x}&y={y}";
+        //var request = new HttpRequestMessage(HttpMethod.Get, url);
+        await httpClient.GetAsync(url);
+        /*
+        if (resposne.StatusCode == HttpStatusCode.NotFound)
+        {
+            MessageBox.Show("Please open the DictTango app first");
+        }
+        */
+    }
+
+    public static void HidDictTangoFloatingWin()
+    {
+        SendTextToDictTango("", 0, 0);
     }
     //alex20230808.en
 }

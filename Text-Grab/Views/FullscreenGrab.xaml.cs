@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows;
@@ -442,10 +443,101 @@ public partial class FullscreenGrab : Window
                 currentScreen = scr;
     }
 
+    private string previousWord = "";
+    private bool queryIsFired = false;
+    private DateTime firstStayTime = DateTime.Now;
+    private async void GetWordWhileMoving(object sender, MouseEventArgs e)
+    {
+        System.Windows.Point movingPoint = e.GetPosition(this);
+        Matrix m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
+        movingPoint.X *= m.M11;
+        movingPoint.Y *= m.M22;
+
+        movingPoint.X = Math.Round(movingPoint.X);
+        movingPoint.Y = Math.Round(movingPoint.Y);
+
+        double correctedLeft = Left;
+        double correctedTop = Top;
+
+        if (correctedLeft < 0)
+            correctedLeft = 0;
+
+        if (correctedTop < 0)
+            correctedTop = 0;
+
+        double xDimScaled = Canvas.GetLeft(selectBorder) * m.M11;
+        double yDimScaled = Canvas.GetTop(selectBorder) * m.M22;
+
+        Rectangle regionScaled = new Rectangle(
+            (int)xDimScaled,
+            (int)yDimScaled,
+            (int)(selectBorder.Width * m.M11),
+            (int)(selectBorder.Height * m.M22));
+
+        string grabbedText = string.Empty;
+
+        //try { RegionClickCanvas.Children.Remove(selectBorder); } catch { }
+
+        Language? selectedOcrLang = LanguagesComboBox.SelectedItem as Language;
+
+        if (selectedOcrLang is null)
+            selectedOcrLang = LanguageUtilities.GetOCRLanguage();
+
+        bool isSmallClick = (regionScaled.Width < 3 || regionScaled.Height < 3);
+
+        bool isSingleLine = SingleLineMenuItem is null ? false : SingleLineMenuItem.IsChecked;
+        bool isTable = TableMenuItem is null ? false : TableMenuItem.IsChecked;
+
+        if (isSmallClick)
+        {
+            BackgroundBrush.Opacity = 0;
+            grabbedText = await OcrUtilities.GetClickedWordAsync(this, new System.Windows.Point(xDimScaled, yDimScaled), selectedOcrLang);
+        }
+        else if (isTable)
+            grabbedText = await OcrUtilities.GetRegionsTextAsTableAsync(this, regionScaled, selectedOcrLang);
+        else
+            grabbedText = await OcrUtilities.GetRegionsTextAsync(this, regionScaled, selectedOcrLang);
+
+        if (grabbedText != previousWord)
+        {
+            Debug.WriteLine("Diff:" + grabbedText);
+            firstStayTime = DateTime.Now;
+            queryIsFired = false;
+            previousWord = grabbedText;
+        }
+        else
+        {
+            
+            if (DateTime.Now.Subtract(firstStayTime).TotalMilliseconds >= 500 && !queryIsFired)
+            {
+                if (string.IsNullOrWhiteSpace(grabbedText))
+                {
+                    Debug.WriteLine("Close window :" + grabbedText);
+                    OutputUtilities.HidDictTangoFloatingWin();
+                }
+                else
+                {
+                    Debug.WriteLine("Query text :" + grabbedText);
+                    OutputUtilities.SendTextToDictTango(grabbedText, e.GetPosition(this).X, e.GetPosition(this).Y);
+                }
+                queryIsFired = true;
+            }
+        }
+        /*
+        else
+        {
+            BackgroundBrush.Opacity = .2;
+            TopButtonsStackPanel.Visibility = Visibility.Visible;
+        }
+        */
+    }
     private void RegionClickCanvas_MouseMove(object sender, MouseEventArgs e)
     {
         if (!isSelecting)
+        {
+            //GetWordWhileMoving(sender, e);
             return;
+        }
 
         System.Windows.Point movingPoint = e.GetPosition(this);
 
@@ -540,7 +632,8 @@ public partial class FullscreenGrab : Window
             grabbedText = await OcrUtilities.GetRegionsTextAsTableAsync(this, regionScaled, selectedOcrLang);
         else
             grabbedText = await OcrUtilities.GetRegionsTextAsync(this, regionScaled, selectedOcrLang);
-
+        //alex20230812.so
+        /*
         if (Settings.Default.UseHistory && !isSmallClick)
         {
             GetDpiAdjustedRegionOfSelectBorder(out DpiScale dpi, out double posLeft, out double posTop);
@@ -568,20 +661,25 @@ public partial class FullscreenGrab : Window
 
             Singleton<HistoryService>.Instance.SaveToHistory(fsgHistoryItem);
         }
-
+        */
+        //alex20230812.eo
         if (!string.IsNullOrWhiteSpace(grabbedText))
         {
+            //alex20230812.so
+            /*
             if (SendToEditTextToggleButton.IsChecked is true && destinationTextBox is null)
             {
                 EditTextWindow etw = WindowUtilities.OpenOrActivateWindow<EditTextWindow>();
                 destinationTextBox = etw.PassedTextControl;
             }
-
+          
             OutputUtilities.HandleTextFromOcr(
                 grabbedText,
                 isSingleLine,
                 isTable,
                 destinationTextBox);
+            */
+            //alex20230812.eo
             OutputUtilities.SendTextToDictTango(grabbedText, e.GetPosition(this).X, e.GetPosition(this).Y);
             WindowUtilities.CloseAllFullscreenGrabs();
         }
