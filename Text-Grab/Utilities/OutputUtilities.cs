@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
+using Text_Grab.Logger;
 using Text_Grab.Properties;
 
 namespace Text_Grab.Utilities;
@@ -37,19 +39,31 @@ public class OutputUtilities
     //alex20230808.sn
     public async static void SendTextToDictTango(string text, double x, double y)
     {
-        if (httpClient == null)
+        try
         {
-            httpClient = new HttpClient();
+            if (httpClient == null)
+            {
+                httpClient = new HttpClient();
+                //httpClient.Timeout = TimeSpan.FromSeconds(5);
+            }
+            var url = $"http://localhost:16332/wordlookup.dt?word={Uri.EscapeDataString(text)}&x={x}&y={y}";
+            AppLogger.LogInfo($"Send \"word\" {text} to DictTango");
+            //var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var resposne = await httpClient.GetAsync(url);
+            if (resposne.StatusCode != HttpStatusCode.OK)
+            {
+                AppLogger.LogError(nameof(SendTextToDictTango), new Exception($"Error code:{resposne.StatusCode}"));
+            }
         }
-        var url = $"http://localhost:16332/wordlookup.dt?word={Uri.EscapeDataString(text)}&x={x}&y={y}";
-        //var request = new HttpRequestMessage(HttpMethod.Get, url);
-        await httpClient.GetAsync(url);
-        /*
-        if (resposne.StatusCode == HttpStatusCode.NotFound)
+        catch (SocketException ex)
         {
-            MessageBox.Show("Please open the DictTango app first");
+            AppLogger.LogError(nameof(SendTextToDictTango), ex);
+            AppLogger.LogError(nameof(SendTextToDictTango), new Exception("Please check if DictTango has been opened"));
         }
-        */
+        catch (Exception ex)
+        {
+            AppLogger.LogError(nameof(SendTextToDictTango), ex);
+        }
     }
 
     public static void HidDictTangoFloatingWin()

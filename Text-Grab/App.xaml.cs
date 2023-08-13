@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Text_Grab.Logger;
 using Text_Grab.Models;
 using Text_Grab.Properties;
 using Text_Grab.Services;
@@ -230,6 +231,7 @@ public partial class App : System.Windows.Application
 
     async void appStartup(object sender, StartupEventArgs e)
     {
+        AppLogger.Init(Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Logs"));
         NumberOfRunningInstances = Process.GetProcessesByName("Text-Grab").Length;
         Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
 
